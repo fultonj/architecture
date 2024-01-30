@@ -14,7 +14,7 @@ replacements:
 # Common network interfaces and vlans
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.internalapi.base_iface
   targets:
   - select:
@@ -23,7 +23,7 @@ replacements:
     - spec.desiredState.interfaces.[name=internalapi].vlan.base-iface
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.internalapi.vlan
   targets:
   - select:
@@ -32,7 +32,7 @@ replacements:
     - spec.desiredState.interfaces.[name=internalapi].vlan.id
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.internalapi.mtu
   targets:
   - select:
@@ -41,7 +41,7 @@ replacements:
     - spec.desiredState.interfaces.[name=internalapi].mtu
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.tenant.base_iface
   targets:
   - select:
@@ -50,7 +50,7 @@ replacements:
     - spec.desiredState.interfaces.[name=tenant].vlan.base-iface
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.tenant.vlan
   targets:
   - select:
@@ -59,7 +59,7 @@ replacements:
     - spec.desiredState.interfaces.[name=tenant].vlan.id
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.tenant.mtu
   targets:
   - select:
@@ -68,7 +68,7 @@ replacements:
     - spec.desiredState.interfaces.[name=tenant].mtu
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.storage.base_iface
   targets:
   - select:
@@ -77,7 +77,7 @@ replacements:
     - spec.desiredState.interfaces.[name=storage].vlan.base-iface
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.storage.vlan
   targets:
   - select:
@@ -86,7 +86,7 @@ replacements:
     - spec.desiredState.interfaces.[name=storage].vlan.id
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.storage.mtu
   targets:
   - select:
@@ -96,8 +96,8 @@ replacements:
 # ctlplane type is ethernet (not vlan)
 - source:
     kind: ConfigMap
-    name: network-values
-    fieldPath: data.ctlplane.iface
+    name: nncp-values
+    fieldPath: data.ctlplane.base_iface
   targets:
   - select:
       kind: NodeNetworkConfigurationPolicy
@@ -105,7 +105,7 @@ replacements:
     - spec.desiredState.interfaces.[type=ethernet].name
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.ctlplane.mtu
   targets:
   - select:
@@ -116,7 +116,7 @@ replacements:
 # Static Node IPs: node-0
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.node_0.internalapi_ip
   targets:
   - select:
@@ -126,7 +126,7 @@ replacements:
     - spec.desiredState.interfaces.[name=internalapi].ipv4.address.0.ip
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.node_0.tenant_ip
   targets:
   - select:
@@ -136,7 +136,7 @@ replacements:
     - spec.desiredState.interfaces.[name=tenant].ipv4.address.0.ip
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.node_0.ctlplane_ip
   targets:
   - select:
@@ -146,7 +146,7 @@ replacements:
     - spec.desiredState.interfaces.[type=ethernet].ipv4.address.0.ip
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.node_0.storage_ip
   targets:
   - select:
@@ -158,7 +158,7 @@ replacements:
 # Static Node IPs: node-1
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.node_1.internalapi_ip
   targets:
   - select:
@@ -168,7 +168,7 @@ replacements:
     - spec.desiredState.interfaces.[name=internalapi].ipv4.address.0.ip
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.node_1.tenant_ip
   targets:
   - select:
@@ -178,7 +178,7 @@ replacements:
     - spec.desiredState.interfaces.[name=tenant].ipv4.address.0.ip
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.node_1.ctlplane_ip
   targets:
   - select:
@@ -188,7 +188,7 @@ replacements:
     - spec.desiredState.interfaces.[type=ethernet].ipv4.address.0.ip
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.node_1.storage_ip
   targets:
   - select:
@@ -200,7 +200,7 @@ replacements:
 # Static Node IPs: node-2
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.node_2.internalapi_ip
   targets:
   - select:
@@ -210,7 +210,7 @@ replacements:
     - spec.desiredState.interfaces.[name=internalapi].ipv4.address.0.ip
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.node_2.tenant_ip
   targets:
   - select:
@@ -220,7 +220,7 @@ replacements:
     - spec.desiredState.interfaces.[name=tenant].ipv4.address.0.ip
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.node_2.ctlplane_ip
   targets:
   - select:
@@ -230,7 +230,7 @@ replacements:
     - spec.desiredState.interfaces.[type=ethernet].ipv4.address.0.ip
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.node_2.storage_ip
   targets:
   - select:
@@ -242,7 +242,7 @@ replacements:
 # prefix-length: node-0
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.ctlplane.prefix-length
   targets:
   - select:
@@ -252,7 +252,7 @@ replacements:
     - spec.desiredState.interfaces.[type=ethernet].ipv4.address.0.prefix-length
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.internalapi.prefix-length
   targets:
   - select:
@@ -262,7 +262,7 @@ replacements:
     - spec.desiredState.interfaces.[name=internalapi].ipv4.address.0.prefix-length
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.tenant.prefix-length
   targets:
   - select:
@@ -272,7 +272,7 @@ replacements:
     - spec.desiredState.interfaces.[name=tenant].ipv4.address.0.prefix-length
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.storage.prefix-length
   targets:
   - select:
@@ -284,7 +284,7 @@ replacements:
 # prefix-length: node-1
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.ctlplane.prefix-length
   targets:
   - select:
@@ -294,7 +294,7 @@ replacements:
     - spec.desiredState.interfaces.[type=ethernet].ipv4.address.0.prefix-length
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.internalapi.prefix-length
   targets:
   - select:
@@ -304,7 +304,7 @@ replacements:
     - spec.desiredState.interfaces.[name=internalapi].ipv4.address.0.prefix-length
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.tenant.prefix-length
   targets:
   - select:
@@ -314,7 +314,7 @@ replacements:
     - spec.desiredState.interfaces.[name=tenant].ipv4.address.0.prefix-length
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.storage.prefix-length
   targets:
   - select:
@@ -326,7 +326,7 @@ replacements:
 # prefix-length: node-2
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.ctlplane.prefix-length
   targets:
   - select:
@@ -336,7 +336,7 @@ replacements:
     - spec.desiredState.interfaces.[type=ethernet].ipv4.address.0.prefix-length
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.internalapi.prefix-length
   targets:
   - select:
@@ -346,7 +346,7 @@ replacements:
     - spec.desiredState.interfaces.[name=internalapi].ipv4.address.0.prefix-length
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.tenant.prefix-length
   targets:
   - select:
@@ -356,7 +356,7 @@ replacements:
     - spec.desiredState.interfaces.[name=tenant].ipv4.address.0.prefix-length
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.storage.prefix-length
   targets:
   - select:
@@ -368,7 +368,7 @@ replacements:
 # Node names
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.node_0.name
   targets:
   - select:
@@ -379,7 +379,7 @@ replacements:
     - spec.nodeSelector.[kubernetes.io/hostname]
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.node_1.name
   targets:
   - select:
@@ -390,7 +390,7 @@ replacements:
     - spec.nodeSelector.[kubernetes.io/hostname]
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.node_2.name
   targets:
   - select:
@@ -403,7 +403,7 @@ replacements:
 # DNS
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.dns-resolver.config
   targets:
   - select:
@@ -414,7 +414,7 @@ replacements:
 # Routes
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.routes.config.0.destination
   targets:
   - select:
@@ -423,7 +423,7 @@ replacements:
     - spec.desiredState.routes.config.0.destination
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.routes.config.0.next-hop-address
   targets:
   - select:
@@ -432,7 +432,7 @@ replacements:
     - spec.desiredState.routes.config.0.next-hop-address
 - source:
     kind: ConfigMap
-    name: network-values
+    name: nncp-values
     fieldPath: data.routes.config.0.next-hop-interface
   targets:
   - select:

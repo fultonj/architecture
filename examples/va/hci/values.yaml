@@ -6,26 +6,6 @@ metadata:
   annotations:
     config.kubernetes.io/local-config: "true"
 data:
-  # nodes
-  node_0:
-    name: ostest-master-0
-    internalapi_ip: 172.17.0.5
-    tenant_ip: 172.19.0.5
-    ctlplane_ip: 192.168.122.10
-    storage_ip: 172.18.0.5
-  node_1:
-    name: ostest-master-1
-    internalapi_ip: 172.17.0.6
-    tenant_ip: 172.19.0.6
-    ctlplane_ip: 192.168.122.11
-    storage_ip: 172.18.0.6
-  node_2:
-    name: ostest-master-2
-    internalapi_ip: 172.17.0.7
-    tenant_ip: 172.19.0.7
-    ctlplane_ip: 192.168.122.12
-    storage_ip: 172.18.0.7
-
   # networks
   ctlplane:
     dnsDomain: ctlplane.example.com
@@ -38,7 +18,6 @@ data:
         cidr: 192.168.122.0/24
         gateway: 192.168.122.1
         name: subnet1
-    prefix-length: 24
     iface: enp7s0
     mtu: 9000
     lb_addresses:
@@ -70,10 +49,7 @@ data:
         name: subnet1
         vlan: 20
     mtu: 1500
-    prefix-length: 24
     iface: internalapi
-    vlan: 20
-    base_iface: enp7s0
     lb_addresses:
     - 172.17.0.80-172.17.0.90
     endpoint_annotations:
@@ -103,10 +79,7 @@ data:
         name: subnet1
         vlan: 21
     mtu: 9000
-    prefix-length: 24
     iface: storage
-    vlan: 21
-    base_iface: enp7s0
     lb_addresses:
     - 172.18.0.80-172.18.0.90
     net-attach-def: |
@@ -142,10 +115,7 @@ data:
         name: subnet1
         vlan: 22
     mtu: 1500
-    prefix-length: 24
     iface: tenant
-    vlan: 22
-    base_iface: enp7s0
     lb_addresses:
     - 172.19.0.80-172.19.0.90
     net-attach-def: |
@@ -181,12 +151,6 @@ data:
       - key: server
         values:
           - 192.168.122.1
-
-  routes:
-    config:
-    - destination: 0.0.0.0/0
-      next-hop-address: 192.168.122.1
-      next-hop-interface: enp7s0
 
   rabbitmq:
     endpoint_annotations:
