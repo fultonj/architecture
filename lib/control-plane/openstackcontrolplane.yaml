@@ -11,6 +11,7 @@ spec:
       databaseInstance: openstack
       secret: osp-secret
       barbicanAPI:
+        enableSecureRBAC: false
         replicas: 1
       barbicanWorker:
         replicas: 1
@@ -101,6 +102,7 @@ spec:
     apiOverride:
       route: {}
     template:
+      enableSecureRBAC: false
       databaseInstance: openstack
       secret: osp-secret
   manila:
