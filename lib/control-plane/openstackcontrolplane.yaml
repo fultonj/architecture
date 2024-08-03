@@ -11,9 +11,9 @@ spec:
       databaseInstance: openstack
       secret: osp-secret
       barbicanAPI:
-        replicas: 3
+        replicas: 1
       barbicanWorker:
-        replicas: 3
+        replicas: 1
       barbicanKeystoneListener:
         replicas: 1
   ceilometer:
@@ -28,7 +28,7 @@ spec:
       route: {"haproxy.router.openshift.io/timeout": "60s"}
     template:
       cinderAPI:
-        replicas: 3
+        replicas: 1
       customServiceConfig: |
         # Debug logs by default, jobs can override as needed.
         [DEFAULT]
@@ -45,7 +45,7 @@ spec:
   dns:
     template:
       options: []
-      replicas: 2
+      replicas: 1
   galera:
     enabled: true
     templates:
@@ -91,7 +91,7 @@ spec:
     template:
       replicas: 1
       secret: osp-secret
-    enabled: true
+    enabled: false
   ironic:
     enabled: false
     template:
@@ -112,7 +112,7 @@ spec:
     template:
       databaseInstance: openstack
       secret: osp-secret
-      replicas: 3
+      replicas: 1
   manila:
     apiOverride:
       route: {"haproxy.router.openshift.io/timeout": "60s"}
@@ -207,7 +207,7 @@ spec:
     template:
       databaseInstance: openstack
       secret: osp-secret
-      replicas: 3
+      replicas: 1
   rabbitmq:
     templates:
       rabbitmq:

@@ -9,9 +9,9 @@ metadata:
 data:
   preserveJobs: false
   cinderAPI:
-    replicas: 3
+    replicas: 1
   cinderBackup:
-    replicas: 3
+    replicas: 1
     customServiceConfig: |
       [DEFAULT]
       backup_driver = cinder.backup.drivers.ceph.CephBackupDriver
@@ -44,16 +44,16 @@ data:
       rbd_thin_provisioning = True
     glanceAPIs:
       default:
-        replicas: 3
+        replicas: 1
   manila:
     enabled: true
     manilaAPI:
-      replicas: 3
+      replicas: 1
       customServiceConfig: |
         [DEFAULT]
         enabled_share_protocols=cephfs
     manilaScheduler:
-      replicas: 3
+      replicas: 1
     manilaShares:
       share1:
         replicas: 1
