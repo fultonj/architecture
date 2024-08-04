@@ -91,7 +91,7 @@ spec:
     template:
       replicas: 1
       secret: osp-secret
-    enabled: true
+    enabled: false
   ironic:
     enabled: false
     template:
