@@ -1,0 +1,50 @@
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+components:
+  - ../../../../va/hci/edpm-post-ceph/nodeset
+
+resources:
+  - ../control-plane/nncp/values.yaml
+  - ../edpm-pre-ceph/nodeset/values.yaml
+  - ../service-values.yaml
+  - ../values.yaml
+
+# post-ceph service list
+# replacements:
+#   - source:
+#       kind: ConfigMap
+#       name: edpm-nodeset-values-post-ceph
+#       fieldPath: data.nodeset.services
+#     targets:
+#       - select:
+#           kind: OpenStackDataPlaneNodeSet
+#         fieldPaths:
+#           - spec.services
+#         options:
+#           create: true
+
+# pre-ceph service list
+# replacements:
+#    - source:
+#        kind: ConfigMap
+#        name: edpm-nodeset-values
+#        fieldPath: data.nodeset.services
+#      targets:
+#        - select:
+#            kind: OpenStackDataPlaneNodeSet
+#          fieldPaths:
+#            - spec.services
+#          options:
+#            create: true
+
+# I can only append to the list if I don't replace it first
+# Wish I could value=(pre.data.nodeset.services + post.data.nodeset.services)
+patches:
+  - target:
+      kind: OpenStackDataPlaneNodeSet
+    patch: |-
+      - op: add
+        path: /spec/services/-
+        value: foo

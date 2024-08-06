@@ -88,3 +88,63 @@ Ask Nova to discover all compute hosts
 ```bash
 oc rsh nova-cell0-conductor-0 nova-manage cell_v2 discover_hosts --verbose
 ```
+
+## Final OpenStackDataPlaneNodeSet services list
+
+The `OpenStackDataPlaneNodeSet` must contain the full `services`
+list so that during updates all required services are updated.
+Thus, the pre-ceph and post-ceph deployments used a `servicesOverride`
+so that only a subset of the services would be configured either
+before or after Ceph was deployed. Any subsequent deployments
+should not pass a `servicesOverride` unless necessary.
+
+### Method 0 (favorite)
+
+A separate PR updates this repo such that:
+
+- NodeSet always has the full services list
+- Deployment pre-ceph passes a `servicesOverride`
+- Deployment post-ceph passes a `servicesOverride`
+
+Any subsequent deployments should just omit the `servicesOverride`
+
+### Alternative 1
+
+Alternatively, we document that they do this:
+
+```
+kustomize build --load-restrictor LoadRestrictionsNone nodeset > nodeset.yaml
+oc apply -f nodeset.yaml
+```
+
+- I only did `LoadRestrictionsNone` to POC quickly
+- [nodeset/kustomization.yaml](nodeset/kustomization.yaml) does not
+  work (see comments)
+- Try commenting out different parts and running the above
+- Not sure I can do this in kustomize without [going too far](https://www.innoq.com/en/blog/2023/03/kustomize-enhancement-with-krm-functions)
+
+### Alternative 2
+Alternatively, we document that they do this:
+```
+PRE=$(yq -o=json '.data.nodeset.services' edpm-pre-ceph/nodeset/values.yaml)
+POST=$(yq -o=json '.data.nodeset.services' values.yaml)
+BOTH=$(jq -s '.[0] + .[1]' <(echo $PRE) <(echo $POST))
+oc patch OpenStackDataPlaneNodeSet openstack-edpm --type='json' -p="[{\"op\": \"add\", \"path\": \"/spec/services/\", \"value\": ${BOTH}}]"
+```
+
+### Alternative 3
+Alternatively, we document that they do this:
+```
+python merge_pre_post_svcs.py nodeset-post-ceph.yaml nodeset.yaml
+oc apply -f nodeset.yaml
+```
+I don't like providing
+[merge_pre_post_svcs.py](merge_pre_post_svcs.py)
+when kustomize does everything else in this repository.
+
+### Alternative 4
+
+We could document alternative 2 but wrap the Python script from
+alternative 3 in an Ansible module in ci-framework and call the
+Ansible module in the `post_stage_run` of the 
+[automation](../../../automation/vars/default.yaml).
