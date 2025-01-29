@@ -1,0 +1,22 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: service-values
+  annotations:
+    config.kubernetes.io/local-config: "true"
+data:
+  topologyRef:
+    name: default-spread-pods
+  preserveJobs: false
+  glance:
+    glanceAPIs:
+      default:
+        storage:
+          external: true
+  nova:
+    template:
+      cellTemplates:
+        cell1:
+          topologyRef:
+            name: azone-node-affinity
