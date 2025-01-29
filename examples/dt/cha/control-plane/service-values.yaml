@@ -1,0 +1,124 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: service-values
+  annotations:
+    config.kubernetes.io/local-config: "true"
+data:
+  preserveJobs: false
+  glance:
+    glanceAPIs:
+      default:
+        storage:
+          external: true
+        topologyRef:
+          name: default-spread-pods
+  cinder:
+    cinderAPI:
+      topologyRef:
+        name: default-spread-pods
+    cinderScheduler:
+      topologyRef:
+        name: default-spread-pods
+  barbican:
+    barbicanAPI:
+      topologyRef:
+        name: default-spread-pods
+    barbicanKeystoneListener:
+      topologyRef:
+        name: default-spread-pods
+    barbicanWorker:
+      topologyRef:
+        name: default-spread-pods
+  galera:
+    openstack:
+      topologyRef:
+        name: default-spread-pods
+    openstack-cell1:
+      topologyRef:
+        name: default-spread-pods
+  heat:
+    heatAPI:
+      topologyRef:
+        name: default-spread-pods
+    heatEngine:
+      topologyRef:
+        name: default-spread-pods
+  horizon:
+    topologyRef:
+      name: default-spread-pods
+  ironic:
+    ironicAPI:
+      topologyRef:
+        name: default-spread-pods
+    ironicInspector:
+      topologyRef:
+        name: default-spread-pods
+    ironicNeutronAgent:
+      topologyRef:
+        name: default-spread-pods
+  keystone:
+    topologyRef:
+      name: default-spread-pods
+  neutron:
+    topologyRef:
+      name: default-spread-pods
+  nova:
+    apiServiceTemplate:
+      topologyRef:
+        name: default-spread-pods
+    cellTemplates:
+      cell0:
+        conductorServiceTemplate:
+          topologyRef:
+            name: default-spread-pods
+      cell1:
+        conductorServiceTemplate:
+          topologyRef:
+            name: default-spread-pods
+    metadataServiceTemplate:
+      topologyRef:
+        name: default-spread-pods
+    schedulerServiceTemplate:
+      topologyRef:
+        name: default-spread-pods
+  octavia:
+    octaviaAPI:
+      topologyRef:
+        name: default-spread-pods
+    octaviaHealthManager:
+      topologyRef:
+        name: default-spread-pods
+    octaviaHousekeeping:
+      topologyRef:
+        name: default-spread-pods
+    octaviaWorker:
+      topologyRef:
+        name: default-spread-pods
+  placement:
+    topologyRef:
+      name: default-spread-pods
+  ovn:
+    ovnController:
+      topologyRef:
+        name: default-spread-pods
+    ovnNorthd:
+      topologyRef:
+        name: default-spread-pods
+    ovnDBCluster:
+      ovndbcluster-nb:
+        topologyRef:
+          name: default-spread-pods
+      ovndbcluster-sb:
+        topologyRef:
+          name: default-spread-pods
+  ceilometer:
+    topologyRef:
+      name: default-spread-pods
+  telemetry:
+    topologyRef:
+      name: default-spread-pods
+  memcached:
+    topologyRef:
+      name: default-spread-pods

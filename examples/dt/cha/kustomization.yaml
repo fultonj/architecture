@@ -1,0 +1,492 @@
+# This is the kustomization for the FINAL step, edpm-post-ceph
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+components:
+  - ../../../va/hci/edpm-post-ceph/nodeset
+
+resources:
+  - control-plane/networking/nncp/values.yaml
+  - edpm-pre-ceph/nodeset/values.yaml
+  - service-values.yaml
+  - values.yaml
+
+replacements:
+  # add external storage true for testing without RWX PVCs
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.glance.glanceAPIs.default.storage
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.glance.template.glanceAPIs.default.storage
+        options:
+          create: true
+
+  # add topologyRef.name to spread manila scheduler pods across zones
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.manila.manilaAPI.topologyRef.name
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.manila.template.manilaAPI.topologyRef.name
+        options:
+          create: true
+
+  # add topologyRef.name to spread manila API pods across zones
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.manila.manilaScheduler.topologyRef.name
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.manila.template.manilaScheduler.topologyRef.name
+        options:
+          create: true
+
+  # add manila share1 to A zone
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.manila.manilaShares.share1.topologyRef.name
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.manila.template.manilaShares.share1.topologyRef.name
+        options:
+          create: true
+
+  # add topologyRef.name to spread default glance pods across zones
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.glance.glanceAPIs.default.topologyRef.name
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.glance.template.glanceAPIs.default.topologyRef.name
+        options:
+          create: true
+
+  # add azone edge pods with azone affinity
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.glance.glanceAPIs.azone
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.glance.template.glanceAPIs.azone
+        options:
+          create: true
+
+  # add bzone edge pods with bzone affinity
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.glance.glanceAPIs.bzone
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.glance.template.glanceAPIs.bzone
+        options:
+          create: true
+
+  # add czone edge pods with czone affinity
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.glance.glanceAPIs.czone
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.glance.template.glanceAPIs.czone
+        options:
+          create: true
+
+  # add topologyRef.name to spread default cinderAPI pods across zones
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.cinderAPI.topologyRef.name
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.cinder.template.cinderAPI.topologyRef.name
+        options:
+          create: true
+
+  # add topologyRef.name to spread default cinderScheduler pods across zones
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.cinderScheduler.topologyRef.name
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.cinder.template.cinderScheduler.topologyRef.name
+        options:
+          create: true
+
+  # topologyRef.name will be added to cinderVolumes under each volume.
+  # For example everything under `ceph` is injected already and the
+  # service-values.yaml already has a topologyRef.
+
+  # add topologyRef.name to spread default cinderBackup pods across zones
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.cinderBackup.topologyRef.name
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.cinder.template.cinderBackup.topologyRef.name
+        options:
+          create: true
+
+  - source:
+      fieldPath: data.barbican.barbicanAPI.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.barbican.template.barbicanAPI.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.barbican.barbicanKeystoneListener.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.barbican.template.barbicanKeystoneListener.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.barbican.barbicanWorker.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.barbican.template.barbicanWorker.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.galera.openstack.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.galera.templates.openstack.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.galera.openstack-cell1.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.galera.templates.openstack-cell1.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.heat.heatAPI.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.heat.template.heatAPI.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.heat.heatEngine.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.heat.template.heatEngine.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.horizon.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.horizon.template.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.ironic.ironicAPI.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.ironic.template.ironicAPI.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.ironic.ironicInspector.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.ironic.template.ironicInspector.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.ironic.ironicNeutronAgent.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.ironic.template.ironicNeutronAgent.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.keystone.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.keystone.template.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.neutron.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.neutron.template.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.nova.apiServiceTemplate.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.nova.template.apiServiceTemplate.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.nova.cellTemplates.cell0.conductorServiceTemplate.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.nova.template.cellTemplates.cell0.conductorServiceTemplate.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.nova.cellTemplates.cell1.conductorServiceTemplate.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.nova.template.cellTemplates.cell1.conductorServiceTemplate.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.nova.metadataServiceTemplate.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.nova.template.metadataServiceTemplate.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.nova.schedulerServiceTemplate.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.nova.template.schedulerServiceTemplate.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.octavia.octaviaAPI.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.octavia.template.octaviaAPI.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.octavia.octaviaHealthManager.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.octavia.template.octaviaHealthManager.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.octavia.octaviaHousekeeping.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.octavia.template.octaviaHousekeeping.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.octavia.octaviaWorker.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.octavia.template.octaviaWorker.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.placement.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.placement.template.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.ovn.ovnController.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.ovn.template.ovnController.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.ovn.ovnDBCluster.ovndbcluster-nb.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.ovn.template.ovnDBCluster.ovndbcluster-nb.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.ovn.ovnDBCluster.ovndbcluster-sb.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.ovn.template.ovnDBCluster.ovndbcluster-sb.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.ovn.ovnNorthd.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.ovn.template.ovnNorthd.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.ceilometer.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.ceilometer.template.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.telemetry.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.telemetry.template.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
+  - source:
+      fieldPath: data.memcached.topologyRef.name
+      kind: ConfigMap
+      name: service-values
+    targets:
+    - fieldPaths:
+      - spec.memcached.templates.memcached.topologyRef.name
+      options:
+        create: true
+      select:
+        kind: OpenStackControlPlane
