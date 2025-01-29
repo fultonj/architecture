@@ -1,0 +1,116 @@
+---
+vas:
+  cha:
+    stages:
+      - pre_stage_run:
+          - name: 01 make masters schedulable
+            type: cr
+            definition:
+              spec:
+                mastersSchedulable: true
+            kind: Scheduler
+            resource_name: cluster
+            state: patched
+        path: examples/dt/cha/control-plane/networking/nncp
+        wait_conditions:
+          - >-
+            oc -n openstack wait nncp
+            -l osp/nncm-config-type=standard
+            --for jsonpath='{.status.conditions[0].reason}'=SuccessfullyConfigured
+            --timeout=180s
+        values:
+          - name: network-values
+            src_file: values.yaml
+        build_output: nncp.yaml
+
+      # This option does not exist. I am documenting that I need
+      # these commands run at this point. Replace with post_stage
+      # playbook later.
+      # - path: examples/dt/cha/topology
+      #   cmd: >-
+      #     oc create -f azone-node-affinity.yaml
+      #     oc create -f bzone-node-affinity.yaml
+      #     oc create -f czone-node-affinity.yaml
+      #     oc create -f default-spread-pods.yaml
+      #     oc label nodes master-0 node=node1 topology.kubernetes.io/zone=zoneA --overwrite
+      #     oc label nodes worker-0 node=node2 topology.kubernetes.io/zone=zoneA --overwrite
+      #     oc label nodes worker-3 node=node3 topology.kubernetes.io/zone=zoneA --overwrite
+      #     oc label nodes master-1 node=node4 topology.kubernetes.io/zone=zoneB --overwrite
+      #     oc label nodes worker-1 node=node5 topology.kubernetes.io/zone=zoneB --overwrite
+      #     oc label nodes master-2 node=node6 topology.kubernetes.io/zone=zoneC --overwrite
+      #     oc label nodes worker-2 node=node7 topology.kubernetes.io/zone=zoneC --overwrite
+
+      - path: examples/dt/cha/control-plane/networking
+        wait_conditions:
+          - >-
+            oc -n metallb-system wait pod
+            -l app=metallb -l component=speaker
+            --for condition=Ready
+            --timeout=5m
+        values:
+          - name: network-values
+            src_file: nncp/values.yaml
+        build_output: network.yaml
+
+      - path: examples/dt/cha/control-plane
+        wait_conditions:
+          - >-
+            oc -n openstack wait osctlplane controlplane --for condition=Ready
+            --timeout=30m
+        values:
+          - name: network-values
+            src_file: networking/nncp/values.yaml
+          - name: service-values
+            src_file: service-values.yaml
+        build_output: control-plane.yaml
+
+      - path: examples/dt/cha/edpm-pre-ceph/nodeset
+        wait_conditions:
+          - >-
+            oc -n openstack wait
+            osdpns openstack-edpm --for condition=SetupReady
+            --timeout=10m
+        values:
+          - name: edpm-nodeset-values
+            src_file: values.yaml
+        build_output: nodeset-pre-ceph.yaml
+
+      - path: examples/dt/cha/edpm-pre-ceph/deployment
+        wait_conditions:
+          - >-
+            oc -n openstack wait
+            osdpns openstack-edpm --for condition=Ready
+            --timeout=30m
+        values:
+          - name: edpm-deployment-values
+            src_file: values.yaml
+        build_output: deployment-pre-ceph.yaml
+        post_stage_run:
+          - name: Deploy Ceph
+            type: playbook
+            source: "../../playbooks/ceph.yml"
+            inventory: "${HOME}/ci-framework-data/artifacts/zuul_inventory.yml"
+
+      - path: examples/dt/cha
+        wait_conditions:
+          - >-
+            oc -n openstack wait
+            osdpns openstack-edpm --for condition=SetupReady
+            --timeout=10m
+        values:
+          - name: service-values
+            src_file: service-values.yaml
+          - name: edpm-nodeset-values-post-ceph
+            src_file: values.yaml
+        build_output: nodeset-post-ceph.yaml
+
+      - path: examples/dt/cha/deployment
+        wait_conditions:
+          - >-
+            oc -n openstack wait
+            osdpns openstack-edpm --for condition=Ready
+            --timeout=40m
+        values:
+          - name: edpm-deployment-values-post-ceph
+            src_file: values.yaml
+        build_output: deployment-post-ceph.yaml
