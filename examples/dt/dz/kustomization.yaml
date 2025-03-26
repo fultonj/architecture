@@ -1,0 +1,180 @@
+# This is the kustomization for the FINAL step, edpm-post-ceph
+---
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+
+components:
+  - ../../../dt/dcn/edpm-post-ceph/nodeset
+
+resources:
+  - control-plane/nncp/values.yaml
+  - edpm-pre-ceph/nodeset/values.yaml
+  - service-values.yaml
+  - values.yaml
+
+replacements:
+  # optional: external storage true for testing failover with LVMS
+  # - source:
+  #     kind: ConfigMap
+  #     name: service-values
+  #     fieldPath: data.glance.glanceAPIs.default.storage
+  #   targets:
+  #     - select:
+  #         kind: OpenStackControlPlane
+  #       fieldPaths:
+  #         - spec.glance.template.glanceAPIs.default.storage
+  #       options:
+  #         create: true
+
+  # add topologyRef.name to spread all pods across zones
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.topologyRef.name
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.topologyRef.name
+        options:
+          create: true
+
+  # set manila api replcias to 3
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.manila.manilaAPI.replicas
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.manila.template.manilaAPI.replicas
+        options:
+          create: true
+
+  # set manila scheduler replcias to 3
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.manila.manilaScheduler.replicas
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.manila.template.manilaScheduler.replicas
+        options:
+          create: true
+
+  # Set glance edge podes to az0 affinity
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.glance.glanceAPIs.az0
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.glance.template.glanceAPIs.az0
+        options:
+          create: true
+
+  # Set glance edge podes to az1 affinity
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.glance.glanceAPIs.az1
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.glance.template.glanceAPIs.az1
+        options:
+          create: true
+
+  # Set glance edge podes to az2 affinity
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.glance.glanceAPIs.az2
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.glance.template.glanceAPIs.az2
+        options:
+          create: true
+
+  # topologyRef.name will be added to cinderVolumes under each volume.
+  # For example everything under `ceph` is injected already and the
+  # service-values.yaml already has a topologyRef.
+
+  # Set topologyRef.name for cinderBackup
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.cinderBackup.topologyRef.name
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.cinder.template.cinderBackup.topologyRef.name
+        options:
+          create: true
+
+  # cells from service-values.yaml
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.nova.metadataServiceTemplate
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.nova.template.metadataServiceTemplate
+        options:
+          create: true
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.nova.cellTemplates
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.nova.template.cellTemplates
+        options:
+          create: true
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.galera.templates
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.galera.templates
+        options:
+          create: true
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.rabbitmq.templates
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.rabbitmq.templates
+        options:
+          create: true
+  # memcached
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.memcached.templates
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.memcached.templates
+        options:
+          create: true

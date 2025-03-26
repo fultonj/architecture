@@ -1,0 +1,10 @@
+apiVersion: topology.openstack.org/v1beta1
+kind: Topology
+metadata:
+  name: default-spread-pods
+  namespace: openstack
+spec:
+  topologySpreadConstraint:
+  - maxSkew: 1
+    topologyKey: topology.kubernetes.io/zone
+    whenUnsatisfiable: ScheduleAnyway

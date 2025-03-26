@@ -1,0 +1,41 @@
+---
+vas:
+  dz:
+    stages:
+      - path: examples/dt/dz/topology
+        wait_conditions:
+          - >-
+            oc -n openstack wait
+            --for=jsonpath='{.metadata.name}'=azone-node-affinity
+            topology/azone-node-affinity --timeout=60s
+        values:
+          - name: node-zone-labels
+            src_file: node-zone-labels.yaml
+        build_output: topology.yaml
+
+      - path: examples/dt/dz/control-plane/nncp
+        wait_conditions:
+          - >-
+            oc -n openstack wait nncp
+            -l osp/nncm-config-type=standard
+            --for jsonpath='{.status.conditions[0].reason}'=SuccessfullyConfigured
+            --timeout=60s
+        values:
+          - name: network-values
+            src_file: values.yaml
+        build_output: nncp.yaml
+
+      - path: examples/dt/dz/control-plane
+        wait_conditions:
+          - >-
+            oc -n openstack wait osctlplane controlplane --for condition=Ready
+            --timeout=30m
+        values:
+          - name: network-values
+            src_file: nncp/values.yaml
+        build_output: ../control-plane.yaml
+        post_stage_run:
+          - name: Deploy DZ
+            type: playbook
+            source: "../../playbooks/dcn.yml"
+            inventory: "${HOME}/ci-framework-data/artifacts/zuul_inventory.yml"
