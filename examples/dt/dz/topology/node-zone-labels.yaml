@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: Node
+metadata:
+  name: master-0
+  labels:
+    topology.kubernetes.io/zone: zoneA
+---
+apiVersion: v1
+kind: Node
+metadata:
+  name: master-1
+  labels:
+    topology.kubernetes.io/zone: zoneB
+---
+apiVersion: v1
+kind: Node
+metadata:
+  name: master-2
+  labels:
+    topology.kubernetes.io/zone: zoneC
