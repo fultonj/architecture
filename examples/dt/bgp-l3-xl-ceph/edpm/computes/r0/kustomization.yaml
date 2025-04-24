@@ -18,3 +18,17 @@ patches:
       - op: replace
         path: /metadata/name
         value: r0-compute-nodes
+
+replacements:
+  # Add ceph extra mounts to HCI compute nodes
+  - source:
+      kind: ConfigMap
+      name: edpm-nodeset-values
+      fieldPath: data.nodeTemplate.extraMounts
+    targets:
+      - select:
+          kind: OpenStackDataPlaneNodeSet
+        fieldPaths:
+          - spec.nodeTemplate.extraMounts
+        options:
+          create: true
