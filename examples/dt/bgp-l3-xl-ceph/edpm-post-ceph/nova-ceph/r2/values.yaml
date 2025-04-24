@@ -1,0 +1,27 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: edpm-deployment-values  
+  annotations:
+    config.kubernetes.io/local-config: 'true'
+data:
+  deployment:
+    name: edpm-deployment-post-ceph-compute
+  nova:
+    ceph:
+      conf: |
+        [libvirt]
+        images_type=rbd
+        images_rbd_pool=vms
+        images_rbd_ceph_conf=/etc/ceph/az2.conf
+        images_rbd_glance_store_name=default_backend
+        images_rbd_glance_copy_poll_interval=15
+        images_rbd_glance_copy_timeout=600
+        rbd_user=openstack
+        rbd_secret_uuid=CHANGE_TO_CEPH_FSID_AZ2
+        [glance]
+        endpoint_override = https://glance-az2-internal.openstack.svc:9292
+        valid_interfaces = internal
+        [cinder]
+        cross_az_attach = True
+        catalog_info = volumev3:cinderv3:internalURL

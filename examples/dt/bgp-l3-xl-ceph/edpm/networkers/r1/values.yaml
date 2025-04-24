@@ -35,6 +35,7 @@ data:
         edpm_network_config_os_net_config_mappings:
           edpm-r1-networker-0:
             nic2: 6d:fe:54:3f:8a:02  # CHANGEME
+        edpm_network_config_nmstate: false
         edpm_network_config_template: |
           ---
           {% set mtu_list = [ctlplane_mtu] %}
@@ -75,8 +76,6 @@ data:
             - ip_netmask: {{ lookup('vars', 'bgpmainnetv6_ip') }}/128
             - ip_netmask: {{ lookup('vars', 'internalapi_ip') }}/32
             - ip_netmask: {{ lookup('vars', 'tenant_ip') }}/32
-        edpm_nodes_validation_validate_controllers_icmp: false
-        edpm_nodes_validation_validate_gateway_icmp: false
         edpm_enable_chassis_gw: true
         edpm_sshd_allowed_ranges:
           - 192.168.122.0/24
@@ -157,17 +156,15 @@ data:
       - download-cache
       - bootstrap
       - configure-network
-      - validate-network
       - install-os
       - configure-os
       - frr
+      - validate-network
       - ssh-known-hosts
       - run-os
       - reboot-os
       - install-certs
       - ovn
-      - neutron-metadata
-      - ovn-bgp-agent
   nova:
     migration:
       ssh_keys:
