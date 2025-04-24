@@ -229,16 +229,11 @@ data:
       - configure-network
       - validate-network
       - install-os
+      - ceph-hci-pre
       - configure-os
       - frr
       - run-os
       - reboot-os
-      - install-certs
-      - ovn
-      - neutron-metadata
-      - ovn-bgp-agent
-      - libvirt
-      - nova
   nova:
     migration:
       ssh_keys:

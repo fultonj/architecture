@@ -2,15 +2,17 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
+# fix me:
+# update control plane to use ceph and create compute deployment (from old previous step)
+
 components:
-  - ../../../../dt/bgp/
+  - ../../../dt/bgp/
 
 resources:
-  - empty-ceph-secret.yaml
-  - nncp/values.yaml
   - service-values.yaml
-  - metallb_bgppeers.yaml
-  - ocp_networks_netattach.yaml
+  - control-plane/nncp/values.yaml
+  - control-plane/metallb_bgppeers.yaml
+  - control-plane/ocp_networks_netattach.yaml
 
 transformers:
   # Set namespace to OpenStack on all namespaced objects without a namespace
@@ -92,7 +94,7 @@ patches:
   - target:
       kind: NetworkAttachmentDefinition
       labelSelector: "osp/net-attach-def-type=bgp"
-    path: ocp_network_template.yaml
+    path: control-plane/ocp_network_template.yaml
 
   # All L2Advertisements are removed
   - target:
@@ -357,16 +359,174 @@ replacements:
         options:
           create: true
 
-  # Set glance replicas to 0 since we do not have storage set up yet
+  # topologyRef.name will be added to cinderVolumes under each volume.
+  # For example everything under `ceph` is injected already and the
+  # service-values.yaml already has a topologyRef.
+
   - source:
       kind: ConfigMap
       name: service-values
-      fieldPath: data.glance.default.replicas
+      fieldPath: data.cinderVolumes
     targets:
       - select:
           kind: OpenStackControlPlane
         fieldPaths:
-          - spec.glance.template.glanceAPIs.default.replicas
+          - spec.cinder.template.cinderVolumes
+        options:
+          create: true
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.cinderAPI.replicas
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.cinder.template.cinderAPI.replicas
+        options:
+          create: true
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.cinder.customServiceConfig
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.cinder.template.customServiceConfig
+        options:
+          create: true
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.cinderBackup.replicas
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.cinder.template.cinderBackup.replicas
+        options:
+          create: true
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.cinderBackup.customServiceConfig
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.cinder.template.cinderBackup.customServiceConfig
+        options:
+          create: true
+
+  # Set topologyRef.name for cinderBackup
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.cinderBackup.topologyRef.name
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.cinder.template.cinderBackup.topologyRef.name
+        options:
+          create: true
+  # manila
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.manila.enabled
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.manila.enabled
+        options:
+          create: true
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.manila.manilaAPI.customServiceConfig
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.manila.template.manilaAPI.customServiceConfig
+        options:
+          create: true
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.manila.manilaShares
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.manila.template.manilaShares
+        options:
+          create: true
+  # set manila api replcias to 3 (unlike in cinder)
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.manila.manilaAPI.replicas
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.manila.template.manilaAPI.replicas
+        options:
+          create: true
+  # set manila scheduler replcias to 3 (unlike in cinder)
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.manila.manilaScheduler.replicas
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.manila.template.manilaScheduler.replicas
+        options:
+          create: true
+
+  # GLANCE
+  # optional: external storage true for testing failover with LVMS
+  # - source:
+  #     kind: ConfigMap
+  #     name: service-values
+  #     fieldPath: data.glance.glanceAPIs.default.storage
+  #   targets:
+  #     - select:
+  #         kind: OpenStackControlPlane
+  #       fieldPaths:
+  #         - spec.glance.template.glanceAPIs.default.storage
+  #       options:
+  #         create: true
+
+  # Set glance template keystoneEndpoint
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.glance.keystoneEndpoint
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.glance.template.keystoneEndpoint
+        options:
+          create: true
+
+  # Set all four glanceAPIs (default, az{0,1,2})
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.glance.glanceAPIs
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.glance.template.glanceAPIs
         options:
           create: true
 
@@ -426,5 +586,18 @@ replacements:
           kind: OpenStackControlPlane
         fieldPaths:
           - spec.rabbitmq.templates
+        options:
+          create: true
+
+  # ceph secret extra mounts
+  - source:
+      kind: ConfigMap
+      name: service-values
+      fieldPath: data.extraMounts
+    targets:
+      - select:
+          kind: OpenStackControlPlane
+        fieldPaths:
+          - spec.extraMounts
         options:
           create: true
