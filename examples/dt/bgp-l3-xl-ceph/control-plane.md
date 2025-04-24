@@ -55,3 +55,8 @@ Wait for control plane to be available
 oc wait osctlplane controlplane --for condition=Ready --timeout=600s
 ```
 
+The initial control plane CR creates an
+[empty secret](control-plane/empty-ceph-secret.yaml)
+only to satisfy an `OpenStackDataPlaneNodeSet` dependency.
+This secret file will be updated later and does not need
+to be set yet.
