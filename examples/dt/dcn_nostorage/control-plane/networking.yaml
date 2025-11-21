@@ -108,6 +108,29 @@ spec:
       }
     }
 ---
+apiVersion: k8s.cni.cncf.io/v1
+kind: NetworkAttachmentDefinition
+metadata:
+  labels:
+    osp/net: storagemgmt
+    osp/net-attach-def-type: standard
+  name: storagemgmt
+  namespace: openstack
+spec:
+  config: |
+    {
+      "cniVersion": "0.3.1",
+      "name": "storagemgmt",
+      "type": "macvlan",
+      "master": "storagemgmt",
+      "ipam": {
+        "type": "whereabouts",
+        "range": "172.20.0.0/24",
+        "range_start": "172.20.0.30",
+        "range_end": "172.20.0.70"
+      }
+    }
+---
 apiVersion: metallb.io/v1beta1
 kind: IPAddressPool
 metadata:
@@ -195,6 +218,17 @@ spec:
   - tenant
   ipAddressPools:
   - tenant
+---
+apiVersion: metallb.io/v1beta1
+kind: L2Advertisement
+metadata:
+  name: storagemgmt
+  namespace: metallb-system
+spec:
+  interfaces:
+  - storagemgmt
+  ipAddressPools:
+  - storagemgmt
 ---
 apiVersion: network.openstack.org/v1beta1
 kind: NetConfig
