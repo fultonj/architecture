@@ -2,20 +2,6 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 
-components:
-  - ../../../../../../va/nfv/ovs-dpdk-sriov/edpm/deployment
-  # - https://github.com/openstack-k8s-operators/architecture/va/nfv/ovs-dpdk-sriov/edpm/deployment?ref=main
-  ## It's possible to replace ../../../../../../va/nfv/ovs-dpdk-sriov/edpm/deployment/ with a git checkout URL
-  ## as per: https://github.com/kubernetes-sigs/kustomize/blob/master/examples/remoteBuild.md
-
+# Reuse the IPv4 deployment configuration entirely - it's identical for IPv6
 resources:
-  - values.yaml
-
-patches:
-  - target:
-      kind: OpenStackDataPlaneDeployment
-      name: edpm-deployment
-    patch: |
-      - op: add
-        path: /spec/nodeSets/-
-        value: openstack-edpm-2
+  - ../../../nfv-ovs-dpdk-sriov-2nodesets/edpm/deployment
