@@ -3,8 +3,8 @@ apiVersion: v1
 data:
     nodeset_name: computes-edpm
     ceph_conf:
-        az0.client.openstack.keyring: CHANGEME_CEPH_CONF
-        az0.conf: CHANGEME_CEPH_KEYRING
+        az0.client.openstack.keyring: CHANGEME_CEPH_KEYRING
+        az0.conf: CHANGEME_CEPH_CONF
         az1.client.openstack.keyring: CHANGEME_CEPH_KEYRING
         az1.conf: CHANGEME_CEPH_CONF
         az2.client.openstack.keyring: CHANGEME_CEPH_KEYRING

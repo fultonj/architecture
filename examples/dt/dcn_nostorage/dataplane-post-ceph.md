@@ -12,10 +12,10 @@ Switch to the "openstack" namespace
 oc project openstack
 ```
 
-Change to the dcn directory
+Change to the dcn_nostorage directory
 
 ```shell
-cd architecture/examples/dt/dcn
+cd architecture/examples/dt/dcn_nostorage
 ```
 
 Edit the [values.yaml](values.yaml) and [service-values.yaml](service-values.yaml)

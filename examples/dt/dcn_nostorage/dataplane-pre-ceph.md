@@ -4,7 +4,7 @@
 
 - The [control plane](control-plane.md) has been created and successfully deployed
 
-## Initialize pre-Ceph
+## Initialize
 
 Switch to the "openstack" namespace
 
@@ -12,10 +12,10 @@ Switch to the "openstack" namespace
 oc project openstack
 ```
 
-Change to the dcn directory
+Change to the dcn_nostorage directory
 
 ```shell
-cd architecture/examples/dt/dcn
+cd architecture/examples/dt/dcn_nostorage
 ```
 
 Edit the [edpm-pre-ceph/nodeset/values.yaml](edpm-pre-ceph/nodeset/values.yaml) file to suit
