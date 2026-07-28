@@ -1,0 +1,43 @@
+# yamllint disable rule:line-length
+# local-config: referenced, but not emitted by kustomize
+# Rack-specific overlay merged onto examples/dt/bgp/common/edpm-compute-evpn
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: edpm-nodeset-values
+  annotations:
+    config.kubernetes.io/local-config: "true"
+data:
+  nodeset:
+    ansible:
+      ansibleVars:
+        edpm_network_config_os_net_config_mappings:
+          edpm-r1-compute-0:
+            nic2: 6a:fe:54:3f:8a:02  # CHANGEME
+    nodes:
+      edpm-r1-compute-0:
+        hostName: edpm-r1-compute-0
+        ansible:
+          ansibleHost: 192.168.123.100
+          ansibleVars:
+            edpm_frr_bgp_peers:
+              - 100.64.1.1
+              - 100.65.1.1
+        networks:
+          - defaultRoute: true
+            fixedIP: 192.168.123.100
+            name: CtlPlane
+            subnetName: subnet1
+          - name: Bgpnet0
+            subnetName: subnet1
+            fixedIP: 100.64.1.2
+          - name: Bgpnet1
+            subnetName: subnet1
+            fixedIP: 100.65.1.2
+          - name: Bgpmainnet
+            subnetName: subnet1
+            fixedIP: 99.99.1.2
+          - name: BgpmainnetV6
+            subnetName: subnet1
+            fixedIP: f00d:f00d:f00d:f00d:f00d:f00d:f00d:0023
