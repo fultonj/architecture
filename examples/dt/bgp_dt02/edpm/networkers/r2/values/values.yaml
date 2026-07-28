@@ -1,0 +1,51 @@
+# yamllint disable rule:line-length
+# local-config: referenced, but not emitted by kustomize
+# Rack-specific overlay merged onto examples/dt/bgp/common/edpm-networker-bgp-agent
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: edpm-nodeset-values
+  annotations:
+    config.kubernetes.io/local-config: "true"
+data:
+  nodeset:
+    ansible:
+      ansibleVars:
+        edpm_frr_bgp_asn: 64899
+        edpm_frr_bgp_graceful_shutdown: false
+        edpm_ovn_bgp_agent_bgp_as: 64899
+        edpm_frr_bgp_uplinks_scope: external
+        edpm_frr_bgp_neighbor_ttl_security_hops: 0
+        edpm_network_config_os_net_config_mappings:
+          edpm-r2-networker-0:
+            nic2: 6d:fe:54:3f:8a:02  # CHANGEME
+    nodes:
+      edpm-r2-networker-0:
+        hostName: edpm-r2-networker-0
+        ansible:
+          ansibleHost: 192.168.124.200
+          ansibleVars:
+            edpm_ovn_bgp_agent_local_ovn_peer_ips:
+              - 100.64.2.5
+              - 100.65.2.5
+            edpm_frr_bgp_peers:
+              - 100.64.2.5
+              - 100.65.2.5
+        networks:
+          - defaultRoute: true
+            fixedIP: 192.168.124.200
+            name: CtlPlane
+            subnetName: subnet1
+          - name: Bgpnet0
+            subnetName: subnet2
+            fixedIP: 100.64.2.6
+          - name: Bgpnet1
+            subnetName: subnet2
+            fixedIP: 100.65.2.6
+          - name: Bgpmainnet
+            subnetName: subnet1
+            fixedIP: 99.99.2.3
+          - name: BgpmainnetV6
+            subnetName: subnet1
+            fixedIP: f00d:f00d:f00d:f00d:f00d:f00d:f00d:0033
