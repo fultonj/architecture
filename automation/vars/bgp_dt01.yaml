@@ -111,7 +111,7 @@ vas:
             --timeout=600s
         values:
           - name: edpm-r0-compute-nodeset-values
-            src_file: values.yaml
+            src_file: values/values.yaml
         build_output: edpm-r0-compute-nodeset.yaml
 
       - name: edpm-computes-r1-nodeset
@@ -124,7 +124,7 @@ vas:
             --timeout=600s
         values:
           - name: edpm-r1-compute-nodeset-values
-            src_file: values.yaml
+            src_file: values/values.yaml
         build_output: edpm-r1-compute-nodeset.yaml
 
       - name: edpm-computes-r2-nodeset
@@ -137,7 +137,7 @@ vas:
             --timeout=600s
         values:
           - name: edpm-r2-compute-nodeset-values
-            src_file: values.yaml
+            src_file: values/values.yaml
         build_output: edpm-r2-compute-nodeset.yaml
 
       - name: edpm-networkers-r0-nodeset
@@ -150,7 +150,7 @@ vas:
             --timeout=600s
         values:
           - name: edpm-r0-networker-nodeset-values
-            src_file: values.yaml
+            src_file: values/values.yaml
         build_output: edpm-r0-networker-nodeset.yaml
 
       - name: edpm-networkers-r1-nodeset
@@ -163,7 +163,7 @@ vas:
             --timeout=600s
         values:
           - name: edpm-r1-networker-nodeset-values
-            src_file: values.yaml
+            src_file: values/values.yaml
         build_output: edpm-r1-networker-nodeset.yaml
 
       - name: edpm-networkers-r2-nodeset
@@ -176,7 +176,7 @@ vas:
             --timeout=600s
         values:
           - name: edpm-r2-networker-nodeset-values
-            src_file: values.yaml
+            src_file: values/values.yaml
         build_output: edpm-r2-networker-nodeset.yaml
 
       - name: edpm-deployment

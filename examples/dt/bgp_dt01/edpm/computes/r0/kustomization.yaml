@@ -8,7 +8,7 @@ components:
   ## https://github.com/kubernetes-sigs/kustomize/blob/master/examples/remoteBuild.md
 
 resources:
-  - values.yaml
+  - values
 
 patches:
   - target:

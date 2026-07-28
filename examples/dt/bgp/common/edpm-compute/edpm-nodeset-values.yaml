@@ -1,5 +1,10 @@
 # yamllint disable rule:line-length
 # local-config: referenced, but not emitted by kustomize
+#
+# Shared BGP EDPM compute nodeset values. Rack overlays under
+# examples/dt/bgp_dt*/edpm/{computes,networkers}/*/values/ merge on top of
+# this base (hostname, IPs, BGP peers, NIC mappings).
+#
 ---
 apiVersion: v1
 kind: ConfigMap
@@ -40,9 +45,6 @@ data:
         edpm_bootstrap_command: |
           dnf -y install conntrack-tools
         edpm_network_config_hide_sensitive_logs: false
-        edpm_network_config_os_net_config_mappings:
-          edpm-r0-compute-0:
-            nic2: 6a:fe:54:3f:8a:02  # CHANGEME
         edpm_network_config_template: |
           ---
           {% set mtu_list = [ctlplane_mtu] %}
@@ -134,32 +136,7 @@ data:
         subnetName: subnet2
       - name: BgpMainNetV6
         subnetName: subnet2
-    nodes:
-      edpm-r0-compute-0:
-        hostName: edpm-r0-compute-0
-        ansible:
-          ansibleHost: 192.168.122.100
-          ansibleVars:
-            edpm_frr_bgp_peers:
-              - 100.64.0.1
-              - 100.65.0.1
-        networks:
-          - defaultRoute: true
-            fixedIP: 192.168.122.100
-            name: CtlPlane
-            subnetName: subnet1
-          - name: Bgpnet0
-            subnetName: subnet1
-            fixedIP: 100.64.0.2
-          - name: Bgpnet1
-            subnetName: subnet1
-            fixedIP: 100.65.0.2
-          - name: Bgpmainnet
-            subnetName: subnet1
-            fixedIP: 99.99.0.2
-          - name: BgpmainnetV6
-            subnetName: subnet1
-            fixedIP: f00d:f00d:f00d:f00d:f00d:f00d:f00d:0012
+    nodes: {}
     services:
       - bootstrap
       - download-cache

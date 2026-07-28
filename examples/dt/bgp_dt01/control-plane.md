@@ -17,7 +17,7 @@ Change to the bgp_dt01/control-plane directory
 cd architecture/examples/dt/bgp_dt01/control-plane
 ```
 Edit the [networking/nncp/values.yaml](control-plane/networking/nncp/values.yaml) and
-[service-values.yaml](control-plane/service-values.yaml) files to suit 
+[service-values.yaml](control-plane/service-values.yaml) files to suit
 your environment.
 ```
 vi networking/nncp/values.yaml
@@ -65,4 +65,3 @@ Wait for control plane to be available
 ```
 oc wait osctlplane controlplane --for condition=Ready --timeout=600s
 ```
-

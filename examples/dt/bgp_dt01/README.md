@@ -8,6 +8,11 @@ The CRs included within this DT should be applied on an environment where EDPM
 and OCP nodes are connected through a spine/leaf network. The BGP protocol
 should be enabled on those spine and leaf routers.
 
+EDPM nodeset defaults shared with other BGP DTs live under
+[`examples/dt/bgp/common`](../bgp/common/). Per-rack inventory for this DT is
+in `edpm/{computes,networkers}/rN/values/values.yaml`. See
+[data-plane.md](data-plane.md) for what to edit before deploying.
+
 ## Purpose
 
 This first BGP DT (DT01) tests default BGP configuration:

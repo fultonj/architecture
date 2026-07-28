@@ -16,21 +16,32 @@ Change to the bgp_dt01/ directory
 ```
 cd architecture/examples/dt/bgp_dt01/
 ```
-Edit the networker values.yaml files corresponding to each rack (r0, r1 and r2)
+
+Shared EDPM defaults (SSH key placeholders, ansible vars, network config
+template, and services lists) live under
+[`examples/dt/bgp/common`](../bgp/common/). Edit them if you need to change
+those defaults for all racks:
+
+- [../bgp/common/edpm-compute/edpm-nodeset-values.yaml](../bgp/common/edpm-compute/edpm-nodeset-values.yaml)
+- [../bgp/common/edpm-networker/edpm-nodeset-values.yaml](../bgp/common/edpm-networker/edpm-nodeset-values.yaml)
+
+Edit the per-rack networker overlays (hostname, fixed IPs, BGP peers, NIC MAC)
 to suit your environment:
-- [edpm/networkers/r0/values.yaml](edpm/networkers/r0/values.yaml)
-- [edpm/networkers/r1/values.yaml](edpm/networkers/r1/values.yaml)
-- [edpm/networkers/r2/values.yaml](edpm/networkers/r2/values.yaml)
+
+- [edpm/networkers/r0/values/values.yaml](edpm/networkers/r0/values/values.yaml)
+- [edpm/networkers/r1/values/values.yaml](edpm/networkers/r1/values/values.yaml)
+- [edpm/networkers/r2/values/values.yaml](edpm/networkers/r2/values/values.yaml)
+
+Edit the per-rack compute overlays the same way:
+
+- [edpm/computes/r0/values/values.yaml](edpm/computes/r0/values/values.yaml)
+- [edpm/computes/r1/values/values.yaml](edpm/computes/r1/values/values.yaml)
+- [edpm/computes/r2/values/values.yaml](edpm/computes/r2/values/values.yaml)
+
 ```
-vi values.yaml
-```
-Edit the compute values.yaml files corresponding to each rack (r0, r1 and r2)
-to suit your environment:
-- [edpm/computes/r0/values.yaml](edpm/computes/r0/values.yaml)
-- [edpm/computes/r1/values.yaml](edpm/computes/r1/values.yaml)
-- [edpm/computes/r2/values.yaml](edpm/computes/r2/values.yaml)
-```
-vi values.yaml
+vi edpm/networkers/r0/values/values.yaml
+vi edpm/computes/r0/values/values.yaml
+# …repeat for r1 and r2
 ```
 
 ## Create Networker and Compute Nodeset CRs
