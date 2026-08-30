@@ -1,0 +1,22 @@
+# local-config: referenced, but not emitted by kustomize
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: edpm-post-ceph-values
+  annotations:
+    config.kubernetes.io/local-config: "true"
+data:
+  nova:
+    ceph:
+      conf: |
+        [libvirt]
+        images_type=rbd
+        images_rbd_pool=vms
+        images_rbd_ceph_conf=/etc/ceph/az0.conf
+        images_rbd_glance_store_name=az0
+        images_rbd_glance_copy_poll_interval = 15
+        images_rbd_glance_copy_timeout = 600
+        rbd_user=openstack
+        hw_disk_discard = unmap
+        rbd_secret_uuid=CHANGE_TO_CEPH_FSID_AZ0
