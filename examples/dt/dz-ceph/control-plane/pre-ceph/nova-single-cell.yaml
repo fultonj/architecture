@@ -1,0 +1,17 @@
+- op: replace
+  path: /spec/nova/template/metadataServiceTemplate/enabled
+  value: true
+- op: remove
+  path: /spec/nova/template/cellTemplates/cell1/metadataServiceTemplate
+- op: remove
+  path: /spec/nova/template/cellTemplates/cell2
+- op: remove
+  path: /spec/nova/template/cellTemplates/cell3
+- op: remove
+  path: /spec/rabbitmq/templates/rabbitmq-cell2
+- op: remove
+  path: /spec/rabbitmq/templates/rabbitmq-cell3
+- op: remove
+  path: /spec/galera/templates/openstack-cell2
+- op: remove
+  path: /spec/galera/templates/openstack-cell3
