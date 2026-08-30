@@ -1,0 +1,47 @@
+---
+# Arm [cinder]/cross_az_attach on the Nova control plane.
+#
+# cross_az_attach is read per process, so setting it only on the computes
+# (nova-extra-config-az{0,1,2}) arms the compute-side check in
+# DriverVolumeBlockDevice.attach() and nothing else. The nova-api and
+# nova-conductor checks stay inert until the option is also in their own
+# configuration:
+#
+#   nova-api        _validate_vol_az_for_create, _validate_unshelve_az,
+#                   _attach_volume_shelved_offloaded, swap_volume
+#   nova-conductor  attach_volume
+#
+# Keep this in sync with
+# examples/dt/dz-ceph/edpm/computes/r{0,1,2}/kustomization.yaml.
+
+# cell0 is missing from the dz-storage cellTemplates override, so the operator
+# supplies it from its defaults. Declare it here with those same defaults so
+# that its conductor can carry the option as well.
+- op: add
+  path: /spec/nova/template/cellTemplates/cell0
+  value:
+    cellDatabaseAccount: nova-cell0
+    cellDatabaseInstance: openstack
+    messagingBus:
+      cluster: rabbitmq
+    hasAPIAccess: true
+    conductorServiceTemplate:
+      customServiceConfig: |
+        [cinder]
+        cross_az_attach = False
+
+- op: add
+  path: /spec/nova/template/apiServiceTemplate/customServiceConfig
+  value: |
+    [cinder]
+    cross_az_attach = False
+- op: add
+  path: /spec/nova/template/schedulerServiceTemplate/customServiceConfig
+  value: |
+    [cinder]
+    cross_az_attach = False
+- op: add
+  path: /spec/nova/template/cellTemplates/cell1/conductorServiceTemplate/customServiceConfig
+  value: |
+    [cinder]
+    cross_az_attach = False
