@@ -4,18 +4,20 @@ This deployment topology is for testing only. It reuses the [dz-storage](../dz-s
 network, networker, and VM definitions, but replaces the external storage arrays with
 three independent single-node Ceph clusters.
 
-Each rack assigns `r*-compute-0` to Nova and `r*-compute-1` to Ceph. The Ceph
-nodes retain their existing VM names so the topology can directly reuse the
-`dz-storage` infrastructure definitions. A production deployment requires
-additional Ceph nodes for redundancy and normally has more Nova computes per
-availability zone.
+Each rack assigns `r*-compute-0` to Nova and `r*-compute-1` to Ceph first. After
+the Ceph cluster is configured, the post-Ceph deployment configures both hosts
+as Nova computes. The Ceph hosts retain their existing VM names so the topology
+can directly reuse the `dz-storage` infrastructure definitions. A production
+deployment requires additional Ceph nodes for redundancy and normally has more
+Nova computes per availability zone.
 
 The automation in `automation/vars/dz-ceph.yaml` defines these phases:
 
 1. Deploy the shared `dz-storage` networking and a pre-Ceph control plane
    with its storage-backed services disabled.
-2. Create separate Nova, Ceph, and networker data-plane NodeSets.
-3. Prepare the Ceph-only nodes with one Ceph cluster per rack.
+2. Create compute and networker data-plane NodeSets. Each compute NodeSet
+   contains both compute VMs and prepares Ceph services on both.
+3. Deploy one Ceph cluster per rack on each rack's `compute-1` host.
 4. Reapply the control plane with the generated Ceph configuration and run
    the post-Ceph Nova compute node deployments.
 
@@ -24,8 +26,10 @@ The automation in `automation/vars/dz-ceph.yaml` defines these phases:
 This topology intentionally references the `dz-storage` networking, topology,
 networker, and VM definitions instead of copying them. Customize the values in
 `examples/dt/dz-storage` when directed by the deployment guides, but build the
-Nova and Ceph NodeSets from the `dz-ceph` overlays. Those overlays divide each
-rack's two compute VMs by role: `compute-0` runs Nova and `compute-1` runs Ceph.
+compute NodeSets from the `dz-ceph` overlays. Each rack's NodeSet includes both
+compute VMs, applies the shared EDPM services to both, and prepares Ceph
+services on both. The Ceph deployment hook targets only `compute-1`; the
+post-Ceph deployment configures Nova on both VMs.
 
 The shared environment preparation is also documented by `dz-storage`:
 
@@ -41,7 +45,7 @@ The shared environment preparation is also documented by `dz-storage`:
 Run the stages in this order:
 
 1. [Configure networking and deploy the pre-Ceph control plane](control-plane.md).
-2. [Create the Nova, Ceph, and networker NodeSets and run the initial EDPM
+2. [Create the compute and networker NodeSets and run the initial EDPM
    deployment](data-plane.md).
 3. Deploy Ceph in each Availability Zone
 4. [Update the control plane for Ceph and finish the Nova

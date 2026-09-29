@@ -1,9 +1,14 @@
 # Prepare the data plane for Ceph
 
-This stage creates separate Nova and Ceph NodeSets from the shared
-`dz-storage` compute definitions. In each rack, `compute-0` remains in the
-Nova NodeSet and `compute-1` is moved to a Ceph-only NodeSet. The networker
+This stage creates one compute NodeSet per rack from the shared `dz-storage`
+compute definitions. Each NodeSet contains both `compute-0` and `compute-1`,
+with the same pre-Ceph services on both. The Ceph playbook targets only
+`compute-1`; the post-Ceph stage configures Nova on both. The networker
 NodeSets are used without modification.
+
+During the pre-Ceph deployment, the combined compute NodeSet runs the same
+services on both VMs, including `ceph-hci-pre`. `libvirt` and Nova are
+configured for both nodes in the post-Ceph deployment.
 
 Run the commands from the root of the `architecture` repository after the
 [pre-Ceph control plane](control-plane.md) is ready.
@@ -21,9 +26,9 @@ network configuration, and other environment-specific settings in each rack:
 - `examples/dt/dz-storage/edpm/computes/r1/values.yaml`
 - `examples/dt/dz-storage/edpm/computes/r2/values.yaml`
 
-Each file supplies values to both the corresponding Nova overlay and the Ceph
-overlay. Do not remove `compute-1` from these files; the `dz-ceph` overlays
-perform the role split.
+Each file supplies values to the corresponding `dz-ceph` compute overlay. Keep
+both `compute-0` and `compute-1` in these files; the Ceph playbook targets
+`compute-1` by host name.
 
 Edit the shared networker values as well:
 
@@ -33,9 +38,9 @@ Edit the shared networker values as well:
 
 The initial deployment membership is defined in
 `examples/dt/dz-ceph/edpm/deployment/values.yaml`. Its default list includes
-all three Nova, Ceph, and networker NodeSets.
+all three compute and networker NodeSets.
 
-## Build and apply the Nova NodeSets
+## Build and apply the compute NodeSets
 
 ### Enable Cells per Zone (Optional)
 
@@ -69,25 +74,6 @@ oc -n openstack wait openstackdataplanenodeset r0-compute-nodes \
 oc -n openstack wait openstackdataplanenodeset r1-compute-nodes \
   --for condition=SetupReady --timeout=600s
 oc -n openstack wait openstackdataplanenodeset r2-compute-nodes \
-  --for condition=SetupReady --timeout=600s
-```
-
-## Build and apply the Ceph-only NodeSets
-
-```shell
-kustomize build examples/dt/dz-ceph/edpm/ceph/r0 > edpm-r0-ceph-nodeset.yaml
-kustomize build examples/dt/dz-ceph/edpm/ceph/r1 > edpm-r1-ceph-nodeset.yaml
-kustomize build examples/dt/dz-ceph/edpm/ceph/r2 > edpm-r2-ceph-nodeset.yaml
-
-oc apply -f edpm-r0-ceph-nodeset.yaml
-oc apply -f edpm-r1-ceph-nodeset.yaml
-oc apply -f edpm-r2-ceph-nodeset.yaml
-
-oc -n openstack wait openstackdataplanenodeset r0-ceph-nodes \
-  --for condition=SetupReady --timeout=600s
-oc -n openstack wait openstackdataplanenodeset r1-ceph-nodes \
-  --for condition=SetupReady --timeout=600s
-oc -n openstack wait openstackdataplanenodeset r2-ceph-nodes \
   --for condition=SetupReady --timeout=600s
 ```
 

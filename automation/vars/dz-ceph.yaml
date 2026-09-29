@@ -173,45 +173,6 @@ vas:
             src_file: ../../../../dz-storage/edpm/computes/r2/values.yaml
         build_output: edpm-r2-compute-nodeset.yaml
 
-      - name: edpm-ceph-r0-nodeset
-        path: examples/dt/dz-ceph/edpm/ceph/r0
-        wait_conditions:
-          - >-
-            oc -n openstack wait openstackdataplanenodeset
-            r0-ceph-nodes
-            --for condition=SetupReady
-            --timeout=600s
-        values:
-          - name: edpm-r0-compute-nodeset-values
-            src_file: ../../../../dz-storage/edpm/computes/r0/values.yaml
-        build_output: edpm-r0-ceph-nodeset.yaml
-
-      - name: edpm-ceph-r1-nodeset
-        path: examples/dt/dz-ceph/edpm/ceph/r1
-        wait_conditions:
-          - >-
-            oc -n openstack wait openstackdataplanenodeset
-            r1-ceph-nodes
-            --for condition=SetupReady
-            --timeout=600s
-        values:
-          - name: edpm-r1-compute-nodeset-values
-            src_file: ../../../../dz-storage/edpm/computes/r1/values.yaml
-        build_output: edpm-r1-ceph-nodeset.yaml
-
-      - name: edpm-ceph-r2-nodeset
-        path: examples/dt/dz-ceph/edpm/ceph/r2
-        wait_conditions:
-          - >-
-            oc -n openstack wait openstackdataplanenodeset
-            r2-ceph-nodes
-            --for condition=SetupReady
-            --timeout=600s
-        values:
-          - name: edpm-r2-compute-nodeset-values
-            src_file: ../../../../dz-storage/edpm/computes/r2/values.yaml
-        build_output: edpm-r2-ceph-nodeset.yaml
-
       - name: edpm-networkers-r0-nodeset
         path: examples/dt/dz-storage/edpm/networkers/r0
         wait_conditions:
@@ -286,12 +247,12 @@ vas:
 
       - name: edpm-post-ceph-r0
         path: examples/dt/dz-ceph/edpm-post-ceph/deployment/r0
+        # Confirm only that deployment was created, so Ansible can run in parallel
         wait_conditions:
           - >-
-            oc -n openstack wait openstackdataplanedeployment
-            edpm-post-ceph-r0
-            --for condition=Ready
-            --timeout=180m
+            oc -n openstack wait openstackdataplanedeployment edpm-post-ceph-r0
+            --for=jsonpath='{.metadata.name}'=edpm-post-ceph-r0
+            --timeout=300s
         values:
           - name: edpm-post-ceph-r0-deployment-values
             src_file: values.yaml
@@ -301,12 +262,12 @@ vas:
 
       - name: edpm-post-ceph-r1
         path: examples/dt/dz-ceph/edpm-post-ceph/deployment/r1
+        # Confirm only that deployment was created, so Ansible can run in parallel
         wait_conditions:
           - >-
-            oc -n openstack wait openstackdataplanedeployment
-            edpm-post-ceph-r1
-            --for condition=Ready
-            --timeout=180m
+            oc -n openstack wait openstackdataplanedeployment edpm-post-ceph-r1
+            --for=jsonpath='{.metadata.name}'=edpm-post-ceph-r1
+            --timeout=300s
         values:
           - name: edpm-post-ceph-r1-deployment-values
             src_file: values.yaml
@@ -316,10 +277,11 @@ vas:
 
       - name: edpm-post-ceph-r2
         path: examples/dt/dz-ceph/edpm-post-ceph/deployment/r2
+        # Wait for all three deployments to complete
         wait_conditions:
           - >-
             oc -n openstack wait openstackdataplanedeployment
-            edpm-post-ceph-r2
+            edpm-post-ceph-r0 edpm-post-ceph-r1 edpm-post-ceph-r2
             --for condition=Ready
             --timeout=180m
         values:

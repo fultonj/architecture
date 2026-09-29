@@ -68,7 +68,6 @@ spec:
             rbd_pool = volumes
             rbd_secret_uuid = CHANGE_TO_CEPH_FSID_AZ0
             rbd_user = openstack
-            extra_capabilities = {"availability_zone": "az0"}
           networkAttachments:
             - storage
             - ctlplane
@@ -88,7 +87,6 @@ spec:
             rbd_pool = volumes
             rbd_secret_uuid = CHANGE_TO_CEPH_FSID_AZ1
             rbd_user = openstack
-            extra_capabilities = {"availability_zone": "az1"}
           networkAttachments:
             - storage
             - ctlplane
@@ -108,7 +106,6 @@ spec:
             rbd_pool = volumes
             rbd_secret_uuid = CHANGE_TO_CEPH_FSID_AZ2
             rbd_user = openstack
-            extra_capabilities = {"availability_zone": "az2"}
           networkAttachments:
             - storage
             - ctlplane

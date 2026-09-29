@@ -14,6 +14,3 @@ data:
     - r0-compute-nodes
     - r1-compute-nodes
     - r2-compute-nodes
-    - r0-ceph-nodes
-    - r1-ceph-nodes
-    - r2-ceph-nodes
