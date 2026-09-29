@@ -28,8 +28,10 @@ rack:
 - `examples/dt/dz-ceph/edpm-post-ceph/deployment/r1/values.yaml`
 - `examples/dt/dz-ceph/edpm-post-ceph/deployment/r2/values.yaml`
 
-The defaults deploy Nova only on the three `compute-0` hosts. Adjust these
-files only if the NodeSet names or service lists have been customized.
+The defaults deploy Nova on both the `compute-0` and `compute-1` hosts in each
+rack. The `compute-1` nodes receive Nova after their Ceph configuration is
+available. Adjust these files only if the NodeSet names or service lists have
+been customized.
 
 ## Update the control plane to use Ceph
 
@@ -55,7 +57,8 @@ oc -n openstack wait openstackcontrolplane controlplane \
 ## Complete the Nova deployment in each rack
 
 Each deployment kustomization includes its rack's `nova-ceph` ConfigMap and
-custom data-plane service. Build and apply the three deployments separately so
+custom data-plane service. It targets the rack's compute NodeSet, which
+contains both compute VMs. Build and apply the three deployments separately so
 that each Nova compute uses the Ceph cluster in its own availability zone.
 
 ```shell

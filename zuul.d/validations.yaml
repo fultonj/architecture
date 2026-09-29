@@ -150,9 +150,6 @@
     - examples/dt/dz-ceph/edpm-post-ceph/deployment/r0
     - examples/dt/dz-ceph/edpm-post-ceph/deployment/r1
     - examples/dt/dz-ceph/edpm-post-ceph/deployment/r2
-    - examples/dt/dz-ceph/edpm/ceph/r0
-    - examples/dt/dz-ceph/edpm/ceph/r1
-    - examples/dt/dz-ceph/edpm/ceph/r2
     - examples/dt/dz-ceph/edpm/computes/r0
     - examples/dt/dz-ceph/edpm/computes/r1
     - examples/dt/dz-ceph/edpm/computes/r2
